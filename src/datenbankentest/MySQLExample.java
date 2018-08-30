@@ -25,24 +25,24 @@ public class MySQLExample {
 
     public void readDataBase() throws Exception {
         try {
-            // This will load the MySQL driver, each DB has its own driver
+            //JDBC Treiber und Database URL
             Class.forName("com.mysql.cj.jdbc.Driver");
-            // Setup the connection with the DB
             connect = DriverManager
-                    .getConnection("jdbc:mysql://localhost/mysqlexample?"
+                    .getConnection("jdbc:mysql://localhost:3306/mysqlexample?serverTimezone=UTC&"
                             + "user=root&password=root");
 
-            // Statements allow to issue SQL queries to the database
+            //Ausführen einer Datenbankabfrage und Ausgabe in einer Schleife
             statement = connect.createStatement();
-            // Result set get the result of the SQL query
             resultSet = statement
                     .executeQuery("select * from mysqlexample.users");
-            writeResultSet(resultSet);
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
+                        + " | " + resultSet.getString(3));
+            }
 
-            // PreparedStatements can use variables and are more efficient
+            //Zusammensetzung eines SQL Befehls mittels PreparedStatement
             preparedStatement = connect
                     .prepareStatement("insert into  mysqlexample.users values (default, ?, ?)");
-            // Parameters start with 1
             preparedStatement.setString(1, "TestVonJava");
             preparedStatement.setString(2, "TestVonJava");
             preparedStatement.executeUpdate();
@@ -55,15 +55,6 @@ public class MySQLExample {
 
     }
 
-    private void writeResultSet(ResultSet resultSet) throws SQLException {
-        // ResultSet is initially before the first data set
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
-                    + " | " + resultSet.getString(3));
-        }
-    }
-
-    // You need to close the resultSet
     private void close() {
         try {
             if (resultSet != null) {

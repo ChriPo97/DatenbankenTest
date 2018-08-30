@@ -12,7 +12,7 @@ import java.sql.*;
  * @author DatenbankenTest
  */
 public class MariaDBExample {
-    
+
     public static void main(String[] args) throws Exception {
         MariaDBExample mariaDBExample = new MariaDBExample();
         mariaDBExample.readDataBase();
@@ -25,16 +25,22 @@ public class MariaDBExample {
 
     public void readDataBase() throws Exception {
         try {
+            //JDBC Treiber und Database URL
             Class.forName("org.mariadb.jdbc.Driver");
             connect = DriverManager
-                    .getConnection("jdbc:mariadb://localhost:3307/mariadbexample?" + 
-                            "user=root&password=root");
-
+                    .getConnection("jdbc:mariadb://localhost:3307/mariadbexample?"
+                            + "user=root&password=root");
+            
+            //Ausführen einer Datenbankabfrage und Ausgabe in einer Schleife
             statement = connect.createStatement();
             resultSet = statement
                     .executeQuery("select * from mariadbexample.users");
-            writeResultSet(resultSet);
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
+                        + " | " + resultSet.getString(3));
+            }
 
+            //Zusammensetzung eines SQL Befehls mittels PreparedStatement
             preparedStatement = connect
                     .prepareStatement("insert into  mariadbexample.users values (default, ?, ?)");
             preparedStatement.setString(1, "TestVonJava");
@@ -45,14 +51,6 @@ public class MariaDBExample {
             throw e;
         } finally {
             close();
-        }
-
-    }
-
-    private void writeResultSet(ResultSet resultSet) throws SQLException {
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
-                    + " | " + resultSet.getString(3));
         }
     }
 
@@ -72,5 +70,5 @@ public class MariaDBExample {
         } catch (Exception e) {
         }
     }
-    
+
 }

@@ -12,7 +12,7 @@ import java.sql.*;
  * @author DatenbankenTest
  */
 public class PostgreSQLExample {
-    
+
     public static void main(String[] args) throws Exception {
         PostgreSQLExample postrgeSQLExample = new PostgreSQLExample();
         postrgeSQLExample.readDataBase();
@@ -25,24 +25,24 @@ public class PostgreSQLExample {
 
     public void readDataBase() throws Exception {
         try {
-            // This will load the MariaDB driver, each DB has its own driver
+            //JDBC Treiber und Database URL
             Class.forName("org.postgresql.Driver");
-            // Setup the connection with the DB
             connect = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/postgresqlexample?" + 
-                            "user=postgres&password=root");
+                    .getConnection("jdbc:postgresql://localhost:5432/postgresqlexample?"
+                            + "user=postgres&password=root");
 
-            // Statements allow to issue SQL queries to the database
+            //Ausführen einer Datenbankabfrage und Ausgabe in einer Schleife
             statement = connect.createStatement();
-            // Result set get the result of the SQL query
             resultSet = statement
                     .executeQuery("select * from users");
-            writeResultSet(resultSet);
+            while (resultSet.next()) {
+                System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
+                        + " | " + resultSet.getString(3));
+            }
 
-            // PreparedStatements can use variables and are more efficient
+            //Zusammensetzung eines SQL Befehls mittels PreparedStatement
             preparedStatement = connect
                     .prepareStatement("insert into users values (DEFAULT,?,?)");
-            // Parameters start with 1
             preparedStatement.setString(1, "TestVonJava");
             preparedStatement.setString(2, "TestVonJava");
             preparedStatement.executeUpdate();
@@ -55,15 +55,6 @@ public class PostgreSQLExample {
 
     }
 
-    private void writeResultSet(ResultSet resultSet) throws SQLException {
-        // ResultSet is initially before the first data set
-        while (resultSet.next()) {
-            System.out.println(resultSet.getString(1) + " | " + resultSet.getString(2)
-                    + " | " + resultSet.getString(3));
-        }
-    }
-
-    // You need to close the resultSet
     private void close() {
         try {
             if (resultSet != null) {
@@ -81,5 +72,5 @@ public class PostgreSQLExample {
 
         }
     }
-    
+
 }

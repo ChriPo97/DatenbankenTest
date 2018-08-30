@@ -19,7 +19,6 @@ public class MariaDBExampleHibernate {
     public static void main(String[] args) throws HibernateException {
         
         SessionFactory sessionFactory = new Configuration().configure().buildSessionFactory();
-        
         Session session = sessionFactory.openSession();
         session.beginTransaction();
 
@@ -27,7 +26,6 @@ public class MariaDBExampleHibernate {
 
         session.save(users);
         session.getTransaction().commit();
-
         session.close();
         sessionFactory.close();
         
